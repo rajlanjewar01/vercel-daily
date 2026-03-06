@@ -44,8 +44,12 @@ export interface Category {
   articleCount: number;
 }
 
-const API_BASE = "https://vercel-daily-news-api.vercel.app/api";
-const BYPASS_TOKEN = "OykROcuULI6YJwAwk3VnWv4gMMbpAq6q";
+const API_BASE = process.env.VERCEL_DAILY_API_URL || "https://vercel-daily-news-api.vercel.app/api";
+const BYPASS_TOKEN = process.env.VERCEL_DAILY_BYPASS_TOKEN;
+
+if (!BYPASS_TOKEN) {
+  throw new Error("VERCEL_DAILY_BYPASS_TOKEN environment variable is required");
+}
 
 /**
  * Universal fetcher for the Vercel Daily News API.
