@@ -1,26 +1,70 @@
 // app/page.tsx
 import Link from 'next/link';
 import Image from 'next/image';
+import { Suspense } from 'react';
 import { fetchVercelDaily, Article } from '@/lib/api';
 
-// Experimental Next.js 16 Caching
-async function getArticles() {
-  "use cache";
-  return await fetchVercelDaily("/products?featured=true");
+// Loading component for the homepage content
+function HomePageLoading() {
+  return (
+    <div className="mx-auto max-w-7xl px-6 pb-20">
+      {/* Loading skeleton for breaking news */}
+      <div className="mt-4 mb-12 h-12 bg-gray-200 animate-pulse rounded-md"></div>
+      
+      {/* Loading skeleton for hero section */}
+      <header className="mb-20">
+        <div className="h-4 w-32 bg-gray-200 animate-pulse rounded mb-4"></div>
+        <div className="space-y-4 mb-8">
+          <div className="h-16 md:h-24 bg-gray-200 animate-pulse rounded"></div>
+          <div className="h-16 md:h-24 bg-gray-200 animate-pulse rounded w-3/4"></div>
+        </div>
+        <div className="flex gap-4">
+          <div className="h-12 w-32 bg-gray-200 animate-pulse rounded-full"></div>
+          <div className="h-12 w-28 bg-gray-200 animate-pulse rounded-full"></div>
+        </div>
+      </header>
+
+      {/* Loading skeleton for featured grid */}
+      <section>
+        <div className="flex justify-between items-end mb-8 border-b border-gray-100 pb-4">
+          <div className="h-8 w-24 bg-gray-200 animate-pulse rounded"></div>
+          <div className="h-4 w-16 bg-gray-200 animate-pulse rounded"></div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="space-y-4">
+              <div className="aspect-video bg-gray-200 animate-pulse rounded-2xl"></div>
+              <div className="space-y-2">
+                <div className="h-3 w-32 bg-gray-200 animate-pulse rounded"></div>
+                <div className="h-6 bg-gray-200 animate-pulse rounded"></div>
+                <div className="h-4 bg-gray-200 animate-pulse rounded w-3/4"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
 }
 
-export default async function HomePage() {
-  const articles: Article[] = await getArticles();
-  const breakingNews = articles[0]; // Using the first featured item as "Breaking"
-  const featuredArticles = articles.slice(1, 7);
+// Server component that fetches data
+async function HomePageContent() {
+  const articles: Article[] = await fetchVercelDaily("/articles?limit=20");
+    
+    // Use the first article for breaking news if available
+    const breakingNews = articles.length > 0 ? articles[0] : null;
+    // Ensure we show at least 6 articles in the featured grid
+    const featuredArticles = articles.length > 1 ? articles.slice(1, 7) : articles.slice(0, 6);
 
   return (
     <div className="mx-auto max-w-7xl px-6 pb-20">
       {/* 1. Breaking News Banner */}
-      <div className="mt-4 mb-12 flex items-center gap-4 bg-black p-2 text-white text-[13px] font-medium rounded-md">
-        <span className="bg-white text-black px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest">Breaking</span>
-        <p className="truncate flex-1">Vercel CDN Now Collapses Over 3M Requests Per Day: {breakingNews.name}</p>
-      </div>
+      {breakingNews && (
+        <div className="mt-4 mb-12 flex items-center gap-4 bg-black p-2 text-white text-[13px] font-medium rounded-md">
+          <span className="bg-white text-black px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest">Breaking</span>
+          <p className="truncate flex-1">Vercel CDN Now Collapses Over 3M Requests Per Day: {breakingNews.title}</p>
+        </div>
+      )}
 
       {/* 2. Hero Section */}
       <header className="mb-20">
@@ -50,10 +94,10 @@ export default async function HomePage() {
           {featuredArticles.map((article) => (
             <Link key={article.id} href={`/articles/${article.slug}`} className="group space-y-4">
               <div className="relative aspect-video overflow-hidden rounded-2xl bg-gray-100">
-                {article.images?.[0]?.url && (
+                {article.image && (
                   <Image 
-                    src={article.images[0].url} 
-                    alt={article.name}
+                    src={article.image} 
+                    alt={article.title}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
@@ -61,13 +105,13 @@ export default async function HomePage() {
               </div>
               <div className="space-y-2">
                 <p className="text-[11px] font-bold uppercase tracking-widest text-apple-gray">
-                  {article.category} • {new Date(article.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  {article.category} • {new Date(article.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </p>
                 <h3 className="text-xl font-semibold leading-tight group-hover:text-apple-blue transition-colors">
-                  {article.name}
+                  {article.title}
                 </h3>
                 <p className="text-apple-gray text-sm line-clamp-2 leading-relaxed">
-                  {article.description}
+                  {article.excerpt}
                 </p>
               </div>
             </Link>
@@ -75,5 +119,13 @@ export default async function HomePage() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<HomePageLoading />}>
+      <HomePageContent />
+    </Suspense>
   );
 }

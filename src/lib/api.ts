@@ -1,29 +1,71 @@
 // lib/api.ts
-export interface Article {
-  id: string;
-  name: string;      // We'll map this to 'Title'
-  description: string; // We'll map this to 'Content'
-  slug: string;
-  category: string;
-  price: number;      // Not used for news, but in API
-  images: { url: string; alt: string }[];
-  featured: boolean;
-  createdAt: string;
+
+// Define the exact block types based on the Vercel Daily API specification
+export type ContentBlock =
+  | { type: "paragraph"; text: string }
+  | { type: "heading"; level: 2 | 3; text: string }
+  | { type: "blockquote"; text: string }
+  | { type: "unordered-list"; items: string[] }
+  | { type: "ordered-list"; items: string[] }
+  | { type: "image"; src: string; alt: string; caption?: string };
+
+export interface Author {
+  name: string;
+  avatar: string;
 }
 
-const API_BASE = "https://vercel-swag-store-api.vercel.app/api";
+export interface Article {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: ContentBlock[];
+  category: string;
+  author: Author;
+  image: string;
+  publishedAt: string;
+  featured: boolean;
+  tags: string[];
+}
+
+export interface BreakingNews {
+  id: string;
+  headline: string;
+  summary: string;
+  articleId: string;
+  category: string;
+  publishedAt: string;
+  urgent: boolean;
+}
+
+export interface Category {
+  slug: string;
+  name: string;
+  articleCount: number;
+}
+
+const API_BASE = "https://vercel-daily-news-api.vercel.app/api";
 const BYPASS_TOKEN = "OykROcuULI6YJwAwk3VnWv4gMMbpAq6q";
 
-export async function fetchVercelDaily(endpoint: string) {
+/**
+ * Universal fetcher for the Vercel Daily News API.
+ * Injects the required bypass token automatically.
+ */
+export async function fetchVercelDaily(endpoint: string, options: RequestInit = {}) {
   const res = await fetch(`${API_BASE}${endpoint}`, {
+    ...options,
     headers: {
       "x-vercel-protection-bypass": BYPASS_TOKEN,
+      "Content-Type": "application/json",
+      ...options.headers,
     },
-    // This is where Next.js 16's internal caching logic lives
-    next: { revalidate: 3600 } 
   });
 
-  if (!res.ok) throw new Error("Failed to fetch data");
   const json = await res.json();
+  
+  if (!json.success) {
+    throw new Error(json.error?.message || "An error occurred while fetching data.");
+  }
+  
   return json.data;
 }

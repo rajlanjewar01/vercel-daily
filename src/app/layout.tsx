@@ -1,30 +1,37 @@
 // app/layout.tsx
-import { Inter } from 'next/font/google';
+import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
-import Link from 'next/link';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+
+export const metadata: Metadata = {
+  title: "Vercel Daily News",
+  description: "Latest insights for modern web developers.",
+  other: {
+    // Required by API Specification
+    "generator": "vnews-cert-v3", 
+  },
+};
+
+export const viewport: Viewport = {
+  // Required by API Specification
+  themeColor: "#1a1a2e", 
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans antialiased text-foreground bg-white`}>
-        <nav className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md">
+      <body className={`${inter.variable} font-sans antialiased text-[#1d1d1f] bg-white`}>
+        <nav className="sticky top-0 z-50 border-b border-gray-100 bg-white/80 backdrop-blur-md">
           <div className="mx-auto flex h-12 max-w-7xl items-center justify-between px-6">
-            <Link href="/" className="text-lg font-bold tracking-tight">Vercel Daily</Link>
-            <div className="flex gap-8 text-[12px] font-medium text-apple-gray">
-              <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
-              <Link href="/search" className="hover:text-foreground transition-colors">Search</Link>
-              {/* We'll add the Subscription button here in the next step */}
-            </div>
+            <Link href="/" className="font-bold tracking-tight hover:text-blue-600 transition-colors">
+              Vercel Daily
+            </Link>
           </div>
         </nav>
         <main>{children}</main>
-        <footer className="border-t border-gray-100 py-12 mt-20">
-          <div className="mx-auto max-w-7xl px-6 text-xs text-apple-gray">
-            © 2024 Vercel Daily News Publication.
-          </div>
-        </footer>
       </body>
     </html>
   );
