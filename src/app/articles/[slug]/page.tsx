@@ -1,8 +1,58 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Suspense } from "react";
-import { fetchVercelDaily, Article, ContentBlock } from "@/lib/api";
+import { Metadata } from "next";
+import { fetchVercelDaily, Article, ContentBlock, fetchArticles } from "@/lib/api";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
+import { toggleSubscriptionAction } from "@/app/actions/subscription";
+import PaywallCTA from "@/components/PaywallCTA";
+
+// Generate dynamic metadata based on the article
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  
+  try {
+    const articles: Article[] = await fetchArticles(50);
+    const article = articles.find(a => a.slug === slug);
+
+    if (!article) {
+      return {
+        title: "Article Not Found - Vercel Daily News",
+        description: "The requested article could not be found.",
+      };
+    }
+
+    return {
+      title: `${article.title} - Vercel Daily News`,
+      description: article.excerpt,
+      keywords: [...(article.tags || []), article.category, "web development", "nextjs", "react"],
+      authors: [{ name: article.author?.name || "Vercel Daily Team" }],
+      openGraph: {
+        title: article.title,
+        description: article.excerpt,
+        url: `https://vercel-daily.com/articles/${article.slug}`,
+        type: "article",
+        publishedTime: article.publishedAt,
+        authors: [article.author?.name || "Vercel Daily Team"],
+        section: article.category,
+        tags: article.tags,
+        images: article.image ? [{ url: article.image, alt: article.title }] : undefined,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: article.title,
+        description: article.excerpt,
+        images: article.image ? [article.image] : undefined,
+      },
+    };
+  } catch (error) {
+    return {
+      title: "Article - Vercel Daily News",
+      description: "Read the latest web development insights and tutorials.",
+    };
+  }
+}
 
 // Loading component for the article page
 function ArticlePageLoading() {
@@ -75,6 +125,28 @@ function ArticlePageLoading() {
         </div>
       </article>
     </div>
+  );
+}
+
+// Loading component for trending articles
+function TrendingArticlesLoading() {
+  return (
+    <section className="mt-16 pt-8 border-t border-gray-100">
+      <div className="h-8 w-48 bg-gray-200 animate-pulse rounded mb-8"></div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div key={index} className="flex gap-4 p-4 rounded-2xl">
+            <div className="flex-shrink-0 w-16 h-16 bg-gray-200 animate-pulse rounded-xl"></div>
+            <div className="flex-1 space-y-2">
+              <div className="h-3 w-20 bg-gray-200 animate-pulse rounded"></div>
+              <div className="h-5 bg-gray-200 animate-pulse rounded"></div>
+              <div className="h-4 bg-gray-200 animate-pulse rounded w-3/4"></div>
+              <div className="h-3 w-16 bg-gray-200 animate-pulse rounded"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -168,8 +240,12 @@ function ContentRenderer({ block }: { block: ContentBlock }) {
 async function ArticlePageContent({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   
-  // Fetch all articles and find the one with matching slug
-  const articles: Article[] = await fetchVercelDaily("/articles?limit=50");
+  // Check subscription status
+  const cookieStore = await cookies();
+  const isSubscribed = !!cookieStore.get("x-subscription-token");
+  
+  // Fetch all articles using cached function and find the one with matching slug
+  const articles: Article[] = await fetchArticles(50);
   const article = articles.find(a => a.slug === slug);
 
   if (!article) {
@@ -251,19 +327,48 @@ async function ArticlePageContent({ params }: { params: Promise<{ slug: string }
 
         {/* Article Content */}
         <div className="prose prose-lg max-w-none">
-          {article.content && Array.isArray(article.content) ? (
-            article.content.map((block, index) => (
-              <ContentRenderer key={index} block={block} />
-            ))
+          {isSubscribed ? (
+            // Full content for subscribed users
+            <>
+              {article.content && Array.isArray(article.content) ? (
+                article.content.map((block, index) => (
+                  <ContentRenderer key={index} block={block} />
+                ))
+              ) : (
+                <p className="text-[#1d1d1f] text-lg leading-relaxed mb-6">
+                  {article.excerpt}
+                </p>
+              )}
+            </>
           ) : (
-            <p className="text-[#1d1d1f] text-lg leading-relaxed mb-6">
-              {article.excerpt}
-            </p>
+            // Limited content for non-subscribed users
+            <>
+              {/* Show first paragraph or excerpt as teaser */}
+              <div className="relative">
+                {article.content && Array.isArray(article.content) && article.content.length > 0 ? (
+                  <>
+                    {/* Show first paragraph/content block */}
+                    <ContentRenderer block={article.content[0]} />
+                    {/* Show second block if it exists and is short */}
+                    {article.content.length > 1 && article.content[1].type === "paragraph" && (
+                      <ContentRenderer block={article.content[1]} />
+                    )}
+                  </>
+                ) : (
+                  <p className="text-[#1d1d1f] text-lg leading-relaxed mb-6">
+                    {article.excerpt}
+                  </p>
+                )}
+                
+                {/* Paywall CTA */}
+                <PaywallCTA />
+              </div>
+            </>
           )}
         </div>
 
-        {/* Tags */}
-        {article.tags && article.tags.length > 0 && (
+        {/* Tags - Only show for subscribed users */}
+        {isSubscribed && article.tags && article.tags.length > 0 && (
           <div className="mt-16 pt-8 border-t border-gray-100">
             <div className="flex flex-wrap gap-2">
               {article.tags.map((tag, index) => (
@@ -278,6 +383,40 @@ async function ArticlePageContent({ params }: { params: Promise<{ slug: string }
           </div>
         )}
 
+        {/* Subscribe CTA - Only show for subscribed users (different from paywall) */}
+        {isSubscribed && (
+          <div className="mt-16 pt-8 border-t border-gray-100">
+            <div className="bg-gradient-to-r from-[#f5f5f7] to-[#fafafa] rounded-2xl p-8 text-center">
+              <h3 className="text-2xl font-bold text-[#1d1d1f] mb-3">
+                Get the latest insights delivered to your inbox
+              </h3>
+              <p className="text-[#86868b] mb-6 max-w-2xl mx-auto">
+                Join thousands of developers who stay ahead with our weekly newsletter covering the latest in web development, frameworks, and best practices.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+                <input 
+                  type="email" 
+                  placeholder="Enter your email address"
+                  className="px-4 py-3 border border-gray-200 rounded-full text-center sm:text-left w-full sm:w-80 focus:outline-none focus:ring-2 focus:ring-[#0066cc] focus:border-transparent"
+                />
+                <button className="bg-[#0066cc] text-white px-8 py-3 rounded-full font-medium hover:bg-[#004499] transition-colors w-full sm:w-auto">
+                  Subscribe
+                </button>
+              </div>
+              <p className="text-xs text-[#86868b] mt-4">
+                No spam, unsubscribe at any time.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Trending Articles - Only show for subscribed users */}
+        {isSubscribed && (
+          <Suspense fallback={<TrendingArticlesLoading />}>
+            <TrendingArticles currentSlug={article.slug} />
+          </Suspense>
+        )}
+
         {/* Navigation */}
         <div className="mt-16 pt-8 border-t border-gray-100 flex justify-center">
           <Link 
@@ -290,6 +429,58 @@ async function ArticlePageContent({ params }: { params: Promise<{ slug: string }
       </article>
     </div>
   );
+}
+
+// Trending Articles Component
+async function TrendingArticles({ currentSlug }: { currentSlug: string }) {
+  try {
+    // Fetch articles and filter out current article, get first 4 as trending
+    const articles: Article[] = await fetchArticles(20);
+    const trendingArticles = articles
+      .filter(article => article.slug !== currentSlug)
+      .slice(0, 4);
+
+    if (trendingArticles.length === 0) {
+      return null;
+    }
+
+    return (
+      <section className="mt-16 pt-8 border-t border-gray-100">
+        <h2 className="text-2xl font-bold text-[#1d1d1f] mb-8">Trending Articles</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {trendingArticles.map((article, index) => (
+            <Link 
+              key={article.id} 
+              href={`/articles/${article.slug}`}
+              className="group flex gap-4 p-4 rounded-2xl hover:bg-[#f5f5f7] transition-colors"
+            >
+              <div className="flex-shrink-0 w-16 h-16 bg-[#f5f5f7] rounded-xl flex items-center justify-center">
+                <span className="text-2xl font-bold text-[#0066cc]">
+                  {(index + 1).toString().padStart(2, '0')}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-bold uppercase tracking-widest text-[#86868b] mb-2">
+                  {article.category}
+                </p>
+                <h3 className="font-semibold text-[#1d1d1f] leading-tight group-hover:text-[#0066cc] transition-colors line-clamp-2">
+                  {article.title}
+                </h3>
+                <p className="text-sm text-[#86868b] mt-2">
+                  {new Date(article.publishedAt).toLocaleDateString('en-US', { 
+                    month: 'short', day: 'numeric' 
+                  })}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+    );
+  } catch (error) {
+    // Silently fail - don't show trending articles if there's an error
+    return null;
+  }
 }
 
 export default function ArticlePage({

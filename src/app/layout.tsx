@@ -1,7 +1,8 @@
 // app/layout.tsx
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import Link from "next/link";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -9,6 +10,28 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 export const metadata: Metadata = {
   title: "Vercel Daily News",
   description: "Latest insights for modern web developers.",
+  keywords: ["vercel", "nextjs", "web development", "react", "javascript", "news"],
+  authors: [{ name: "Vercel Daily Team" }],
+  creator: "Vercel Daily",
+  publisher: "Vercel Daily",
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://vercel-daily.com",
+    title: "Vercel Daily News",
+    description: "Latest insights for modern web developers.",
+    siteName: "Vercel Daily",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Vercel Daily News",
+    description: "Latest insights for modern web developers.",
+    creator: "@vercel_daily",
+  },
   other: {
     // Required by API Specification
     "generator": "vnews-cert-v3", 
@@ -24,14 +47,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased text-[#1d1d1f] bg-white`}>
-        <nav className="sticky top-0 z-50 border-b border-gray-100 bg-white/80 backdrop-blur-md">
-          <div className="mx-auto flex h-12 max-w-7xl items-center justify-between px-6">
-            <Link href="/" className="font-bold tracking-tight hover:text-blue-600 transition-colors">
-              Vercel Daily
-            </Link>
-          </div>
-        </nav>
+        <Navbar />
         <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );

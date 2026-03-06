@@ -1,9 +1,27 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Suspense } from "react";
-import { fetchVercelDaily, Article, Category } from "@/lib/api";
+import { Metadata } from "next";
+import { fetchVercelDaily, Article, Category, fetchArticlesWithParams, fetchCategories } from "@/lib/api";
 import SearchInput from "@/components/SearchInput";
 import CategoryFilter from "@/components/CategoryFilter";
+
+export const metadata: Metadata = {
+  title: "Search Articles - Vercel Daily News",
+  description: "Search through our extensive collection of web development articles, tutorials, and insights. Find content on Next.js, React, Vercel, and more.",
+  keywords: ["search articles", "web development search", "nextjs tutorials", "react guides", "vercel content"],
+  openGraph: {
+    title: "Search Articles - Vercel Daily News",
+    description: "Search through our extensive collection of web development articles, tutorials, and insights.",
+    url: "https://vercel-daily.com/search",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Search Articles - Vercel Daily News", 
+    description: "Search through our extensive collection of web development articles, tutorials, and insights.",
+  },
+};
 
 // Loading component for the search page
 function SearchPageLoading() {
@@ -51,15 +69,14 @@ async function SearchPageContent({ searchParams }: { searchParams: Promise<{ sea
   // Await searchParams as required in Next.js 15+ / 16 Canary
   const { search = "", category = "" } = await searchParams;
 
-  // Construct the API query string dynamically - show all articles by default
-  const query = new URLSearchParams({ limit: "50" }); // Increased limit to show all available articles
-  if (search) query.set("search", search);
-  if (category) query.set("category", category);
-
-  // Fetch data in parallel to optimize load times
+  // Fetch data in parallel to optimize load times using cached functions
   const [articles, categories]: [Article[], Category[]] = await Promise.all([
-    fetchVercelDaily(`/articles?${query.toString()}`),
-    fetchVercelDaily("/categories"),
+    fetchArticlesWithParams({
+      limit: "50",
+      search: search || undefined,
+      category: category || undefined,
+    }),
+    fetchCategories(),
   ]);
 
   return (

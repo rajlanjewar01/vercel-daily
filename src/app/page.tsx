@@ -2,7 +2,25 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Suspense } from 'react';
-import { fetchVercelDaily, Article } from '@/lib/api';
+import { Metadata } from 'next';
+import { fetchVercelDaily, Article, fetchArticles } from '@/lib/api';
+
+export const metadata: Metadata = {
+  title: "Homepage - Vercel Daily News",
+  description: "Stay updated with the latest web development news, insights, and tutorials from the Vercel Daily team. Your hub for Next.js, React, and modern web development.",
+  keywords: ["web development news", "nextjs", "react", "vercel", "javascript news", "frontend development"],
+  openGraph: {
+    title: "Homepage - Vercel Daily News",
+    description: "Stay updated with the latest web development news, insights, and tutorials from the Vercel Daily team.",
+    url: "https://vercel-daily.com",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Homepage - Vercel Daily News",
+    description: "Stay updated with the latest web development news, insights, and tutorials from the Vercel Daily team.",
+  },
+};
 
 // Loading component for the homepage content
 function HomePageLoading() {
@@ -49,7 +67,7 @@ function HomePageLoading() {
 
 // Server component that fetches data
 async function HomePageContent() {
-  const articles: Article[] = await fetchVercelDaily("/articles?limit=20");
+  const articles: Article[] = await fetchArticles(20);
     
     // Use the first article for breaking news if available
     const breakingNews = articles.length > 0 ? articles[0] : null;

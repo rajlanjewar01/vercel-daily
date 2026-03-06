@@ -69,3 +69,35 @@ export async function fetchVercelDaily(endpoint: string, options: RequestInit = 
   
   return json.data;
 }
+
+/**
+ * Cached function to fetch articles - optimized with Cache Components
+ */
+export async function fetchArticles(limit: number = 50) {
+  "use cache";
+  return await fetchVercelDaily(`/articles?limit=${limit}`);
+}
+
+/**
+ * Cached function to fetch categories - optimized with Cache Components
+ */
+export async function fetchCategories() {
+  "use cache";
+  return await fetchVercelDaily("/categories");
+}
+
+/**
+ * Cached function to fetch articles with search/filter parameters
+ */
+export async function fetchArticlesWithParams(searchParams: {
+  limit?: string;
+  search?: string;
+  category?: string;
+}) {
+  "use cache";
+  const query = new URLSearchParams({ limit: searchParams.limit || "50" });
+  if (searchParams.search) query.set("search", searchParams.search);
+  if (searchParams.category) query.set("category", searchParams.category);
+  
+  return await fetchVercelDaily(`/articles?${query.toString()}`);
+}
