@@ -33,7 +33,7 @@ export async function GET() {
         method: "GET",
         headers: {
           "x-subscription-token": subscriptionToken,
-          "x-vercel-protection-bypass": BYPASS_TOKEN,
+          "x-vercel-protection-bypass": BYPASS_TOKEN!,
         },
       });
       

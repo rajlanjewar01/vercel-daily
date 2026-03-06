@@ -46,7 +46,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans antialiased text-[#1d1d1f] bg-white`}>
+      <body className={`${inter.variable} font-sans antialiased text-brand-primary bg-brand-bg-primary`}>
         <Navbar />
         <main>{children}</main>
         <Footer />

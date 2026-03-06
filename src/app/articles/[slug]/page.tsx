@@ -269,8 +269,8 @@ async function ArticlePageContent({ params }: { params: Promise<{ slug: string }
       <article className="mx-auto max-w-4xl px-6 py-16">
         {/* Article Header */}
         <header className="mb-12">
-          <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-[#86868b] mb-4">
-            <span className="text-[#0066cc]">{article.category}</span>
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand-secondary mb-4">
+            <span className="text-brand-accent">{article.category}</span>
             <span>•</span>
             <time>
               {new Date(article.publishedAt).toLocaleDateString('en-US', { 
@@ -279,11 +279,11 @@ async function ArticlePageContent({ params }: { params: Promise<{ slug: string }
             </time>
           </div>
           
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-[#1d1d1f] mb-6 leading-[1.1]">
+          <h1 className="text-display font-bold tracking-tight text-brand-primary mb-6 leading-[1.1]">
             {article.title}
           </h1>
           
-          <p className="text-xl text-[#86868b] leading-relaxed mb-8 font-medium">
+          <p className="text-lead text-brand-secondary leading-relaxed mb-8 font-medium">
             {article.excerpt}
           </p>
 

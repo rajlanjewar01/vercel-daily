@@ -4,8 +4,12 @@
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
-const BYPASS_TOKEN = "OykROcuULI6YJwAwk3VnWv4gMMbpAq6q";
-const API_URL = "https://vercel-daily-news-api.vercel.app/api";
+const BYPASS_TOKEN = process.env.VERCEL_DAILY_BYPASS_TOKEN;
+const API_URL = process.env.VERCEL_DAILY_API_URL || "https://vercel-daily-news-api.vercel.app/api";
+
+if (!BYPASS_TOKEN) {
+  throw new Error("VERCEL_DAILY_BYPASS_TOKEN environment variable is required");
+}
 
 export async function toggleSubscriptionAction() {
   const cookieStore = await cookies();
