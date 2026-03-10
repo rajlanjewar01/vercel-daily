@@ -1,4 +1,6 @@
-import Link from "next/link";
+"use client";
+
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Category } from "@/lib/api";
 
 interface CategoryFilterProps {
@@ -8,46 +10,47 @@ interface CategoryFilterProps {
 }
 
 export default function CategoryFilter({ categories, currentCategory, currentSearch }: CategoryFilterProps) {
-  // Helper to construct the URL retaining the current search term
-  const buildUrl = (targetCategory: string | null) => {
-    const params = new URLSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const handleCategoryChange = (selectedCategory: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    
     // Only retain search when selecting a specific category, clear when going to "All News"
-    if (currentSearch && targetCategory) params.set("search", currentSearch);
-    if (targetCategory) params.set("category", targetCategory);
-    return `/search?${params.toString()}`;
+    if (currentSearch && selectedCategory !== "") {
+      params.set("search", currentSearch);
+    } else if (selectedCategory === "") {
+      params.delete("search");
+    }
+    
+    if (selectedCategory && selectedCategory !== "") {
+      params.set("category", selectedCategory);
+    } else {
+      params.delete("category");
+    }
+    
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   return (
-    <div className="flex flex-wrap gap-3">
-      <Link
-        href={buildUrl(null)}
-        className={`px-5 py-2.5 rounded-button text-body-sm font-semibold transition-all ${
-          !currentCategory
-            ? "bg-brand-primary text-white shadow-button"
-            : "bg-brand-light text-brand-secondary hover:bg-gray-200 hover:text-brand-primary"
-        }`}
+    <div className="w-full">
+      <label htmlFor="category-filter" className="block text-sm font-medium text-gray-700 mb-2">
+        Filter by Category
+      </label>
+      <select
+        id="category-filter"
+        value={currentCategory || ""}
+        onChange={(e) => handleCategoryChange(e.target.value)}
+        className="block w-full max-w-sm px-3 py-2 bg-white border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
       >
-        All News
-      </Link>
-      
-      {categories.map((cat) => (
-        <Link
-          key={cat.slug}
-          href={buildUrl(cat.slug)}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-button text-body-sm font-semibold transition-all ${
-            currentCategory === cat.slug
-              ? "bg-brand-primary text-white shadow-button"
-              : "bg-brand-light text-brand-secondary hover:bg-gray-200 hover:text-brand-primary"
-          }`}
-        >
-          {cat.name}
-          <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-            currentCategory === cat.slug ? "bg-white/20 text-white" : "bg-gray-200 text-brand-secondary"
-          }`}>
-            {cat.articleCount}
-          </span>
-        </Link>
-      ))}
+        <option value="">All Categories</option>
+        {categories.map((cat) => (
+          <option key={cat.slug} value={cat.slug}>
+            {cat.name} ({cat.articleCount})
+          </option>
+        ))}
+      </select>
     </div>
   );
 }
