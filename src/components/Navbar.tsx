@@ -10,11 +10,6 @@ export default function Navbar() {
           <Link href="/" className="text-lg font-bold tracking-tight">
             Vercel Daily
           </Link>
-          <div className="hidden md:flex gap-6 text-caption font-medium text-brand-secondary">
-            <Link href="/" className="hover:text-brand-primary transition-colors">Home</Link>
-            <Link href="/search?category=engineering" className="hover:text-brand-primary transition-colors">Engineering</Link>
-            <Link href="/search?category=changelog" className="hover:text-brand-primary transition-colors">Changelog</Link>
-          </div>
         </div>
 
         <div className="flex items-center gap-4">

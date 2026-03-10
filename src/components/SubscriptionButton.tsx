@@ -70,7 +70,7 @@ export default function SubscriptionButton() {
     <button 
       onClick={handleToggleSubscription}
       disabled={isLoading || isToggling}
-      className={`text-[11px] font-bold px-3 py-1 rounded-full transition-all flex items-center gap-1 min-w-[80px] justify-center ${
+      className={`text-[11px] font-bold px-3 py-1 rounded-full transition-all flex items-center gap-1 min-w-[80px] justify-center cursor-pointer ${
         isSubscribed 
         ? "bg-green-50 text-green-700 border border-green-200" 
         : "bg-black text-white hover:bg-zinc-800"

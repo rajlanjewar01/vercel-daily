@@ -11,7 +11,8 @@ export default function CategoryFilter({ categories, currentCategory, currentSea
   // Helper to construct the URL retaining the current search term
   const buildUrl = (targetCategory: string | null) => {
     const params = new URLSearchParams();
-    if (currentSearch) params.set("search", currentSearch);
+    // Only retain search when selecting a specific category, clear when going to "All News"
+    if (currentSearch && targetCategory) params.set("search", currentSearch);
     if (targetCategory) params.set("category", targetCategory);
     return `/search?${params.toString()}`;
   };
