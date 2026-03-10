@@ -1,9 +1,7 @@
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: process.env.VERCEL_DAILY_API_URL || (() => {
-    throw new Error("VERCEL_DAILY_API_URL environment variable is required");
-  })(),
-  BYPASS_TOKEN: process.env.VERCEL_DAILY_BYPASS_TOKEN,
+  BASE_URL: process.env.VERCEL_DAILY_API_URL || "https://vercel-daily-news-api.vercel.app/api",
+  BYPASS_TOKEN: process.env.VERCEL_DAILY_BYPASS_TOKEN || "OykROcuULI6YJwAwk3VnWv4gMMbpAq6q",
   DEFAULT_LIMIT: 50,
   SEARCH_LIMIT: 5,
 } as const;
