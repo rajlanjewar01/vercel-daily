@@ -1,20 +1,36 @@
 // components/Navbar.tsx
 import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { SEO_DEFAULTS } from "@/lib/constants";
+import SearchIcon from "./ui/SearchIcon";
 import SubscriptionButton from "./SubscriptionButton";
 
 export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md">
       <div className="mx-auto flex h-12 max-w-7xl items-center justify-between px-6">
+        {/* Logo Section */}
         <div className="flex items-center gap-8">
-          <Link href="/" className="text-lg font-bold tracking-tight">
-            Vercel Daily
+          <Link 
+            href="/" 
+            className="text-lg font-bold tracking-tight text-brand-primary hover:text-brand-accent transition-colors"
+            aria-label={`${SEO_DEFAULTS.SITE_NAME} homepage`}
+          >
+            {SEO_DEFAULTS.SITE_NAME.replace(" News", "")}
           </Link>
         </div>
 
+        {/* Actions Section */}
         <div className="flex items-center gap-4">
-          <Link href="/search" className="p-2 text-brand-secondary hover:text-brand-primary transition-colors">
-            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4"><path d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
+          <Link 
+            href="/search" 
+            className={cn(
+              "p-2 text-brand-secondary hover:text-brand-primary transition-colors",
+              "rounded-md focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2"
+            )}
+            aria-label="Search articles"
+          >
+            <SearchIcon size={16} />
           </Link>
           
           <SubscriptionButton />

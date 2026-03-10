@@ -1,4 +1,5 @@
 // lib/api.ts
+import { API_CONFIG, ERROR_MESSAGES } from "./constants";
 
 // Define the exact block types based on the Vercel Daily API specification
 export type ContentBlock =
@@ -44,40 +45,57 @@ export interface Category {
   articleCount: number;
 }
 
-const API_BASE = process.env.VERCEL_DAILY_API_URL || "https://vercel-daily-news-api.vercel.app/api";
-const BYPASS_TOKEN = process.env.VERCEL_DAILY_BYPASS_TOKEN;
-
-if (!BYPASS_TOKEN) {
+if (!API_CONFIG.BYPASS_TOKEN) {
   throw new Error("VERCEL_DAILY_BYPASS_TOKEN environment variable is required");
 }
 
 /**
  * Universal fetcher for the Vercel Daily News API.
- * Injects the required bypass token automatically.
+ * Injects the required bypass token automatically with improved error handling.
  */
 export async function fetchVercelDaily(endpoint: string, options: RequestInit = {}) {
-  const res = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers: {
-      "x-vercel-protection-bypass": BYPASS_TOKEN,
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
-
-  const json = await res.json();
-  
-  if (!json.success) {
-    throw new Error(json.error?.message || "An error occurred while fetching data.");
+  // Ensure token exists (runtime check)
+  const bypassToken = API_CONFIG.BYPASS_TOKEN;
+  if (!bypassToken) {
+    throw new Error("API bypass token is required but not configured");
   }
-  
-  return json.data;
+
+  try {
+    const res = await fetch(`${API_CONFIG.BASE_URL}${endpoint}`, {
+      ...options,
+      headers: {
+        "x-vercel-protection-bypass": bypassToken,
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+      next: {
+        revalidate: 300, // 5 minutes cache
+        tags: [endpoint], // Enable tag-based revalidation
+        ...options.next,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    }
+
+    const json = await res.json();
+    
+    if (!json.success) {
+      throw new Error(json.error?.message || ERROR_MESSAGES.LOADING_FAILED);
+    }
+    
+    return json.data;
+  } catch (error) {
+    console.error(`API Error for ${endpoint}:`, error);
+    throw error;
+  }
 }
 
 /**
  * Cached function to fetch articles - optimized with Cache Components
  */
-export async function fetchArticles(limit: number = 50) {
+export async function fetchArticles(limit: number = API_CONFIG.DEFAULT_LIMIT) {
   "use cache";
   return await fetchVercelDaily(`/articles?limit=${limit}`);
 }
@@ -99,9 +117,17 @@ export async function fetchArticlesWithParams(searchParams: {
   category?: string;
 }) {
   "use cache";
-  const query = new URLSearchParams({ limit: searchParams.limit || "50" });
-  if (searchParams.search) query.set("search", searchParams.search);
-  if (searchParams.category) query.set("category", searchParams.category);
+  const query = new URLSearchParams({ 
+    limit: searchParams.limit || API_CONFIG.DEFAULT_LIMIT.toString()
+  });
+  
+  if (searchParams.search?.trim()) {
+    query.set("search", searchParams.search.trim());
+  }
+  
+  if (searchParams.category?.trim()) {
+    query.set("category", searchParams.category.trim());
+  }
   
   return await fetchVercelDaily(`/articles?${query.toString()}`);
 }

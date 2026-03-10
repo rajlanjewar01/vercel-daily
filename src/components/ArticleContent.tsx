@@ -1,6 +1,7 @@
 // components/ArticleContent.tsx
 import Image from "next/image";
 import { ContentBlock } from "@/lib/api";
+import { COMMON_STYLES } from '@/lib/constants';
 
 interface ArticleContentProps {
   blocks: ContentBlock[];
@@ -15,7 +16,7 @@ export function ArticleContent({ blocks }: ArticleContentProps) {
             return (
               <p 
                 key={index} 
-                className="text-[19px] leading-[1.6] text-[#1d1d1f] font-normal"
+                className={COMMON_STYLES.texts.articleParagraph}
               >
                 {block.text}
               </p>
@@ -77,7 +78,7 @@ export function ArticleContent({ blocks }: ArticleContentProps) {
                   />
                 </div>
                 {block.caption && (
-                  <figcaption className="mt-4 text-center text-sm text-[#86868b] font-medium italic">
+                  <figcaption className={COMMON_STYLES.texts.caption}>
                     {block.caption}
                   </figcaption>
                 )}

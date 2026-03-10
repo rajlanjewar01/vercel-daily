@@ -1,52 +1,101 @@
 "use client";
 
 import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { UI_CONFIG, SUCCESS_MESSAGES, ERROR_MESSAGES, COMMON_STYLES } from "@/lib/constants";
+import Button from "./ui/Button";
 
-export default function PaywallCTA() {
+interface PaywallCTAProps {
+  className?: string;
+}
+
+export default function PaywallCTA({ className }: PaywallCTAProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubscribe = async () => {
     setIsLoading(true);
+    setError(null);
+    
     try {
       const response = await fetch("/api/subscription-toggle", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
       
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
           setIsSubscribed(true);
-          // Small delay to show success state, then reload page
+          
+          // Show success state before reload
           setTimeout(() => {
             window.location.reload();
-          }, 1000);
+          }, UI_CONFIG.SUBSCRIPTION_SUCCESS_DELAY);
+        } else {
+          throw new Error(data.message || "Subscription failed");
         }
+      } else {
+        throw new Error("Network error occurred");
       }
     } catch (error) {
-      console.error("Failed to subscribe:", error);
+      console.error("Subscription error:", error);
+      setError(error instanceof Error ? error.message : ERROR_MESSAGES.SUBSCRIPTION_FAILED);
     } finally {
       setIsLoading(false);
     }
   };
+
   return (
-    <div className="relative z-20 overflow-hidden rounded-section bg-brand-light border border-brand-border-light p-10 md:p-16 text-center shadow-card">
+    <div className={cn(
+      COMMON_STYLES.CARD_BASE,
+      "p-10 md:p-16 text-center",
+      className
+    )}>
       <div className="max-w-md mx-auto">
-        <h2 className="text-title font-bold tracking-tight text-brand-primary mb-4">
+        <h2 className={cn(COMMON_STYLES.HEADING_LG, "mb-4")}>
           The story continues.
         </h2>
+        
         <p className="text-brand-secondary text-body-lg leading-relaxed mb-10">
           Subscribe to Vercel Daily for full access to our engineering deep dives, 
           engineering changelogs, and community highlights.
         </p>
 
-        <form onSubmit={(e) => { e.preventDefault(); handleSubscribe(); }}>
-          <button 
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-600 text-sm">{error}</p>
+          </div>
+        )}
+
+        <form onSubmit={(e) => { 
+          e.preventDefault(); 
+          handleSubscribe(); 
+        }}>
+          <Button
             type="submit"
-            disabled={isLoading || isSubscribed}
-            className="inline-flex items-center justify-center rounded-button bg-brand-primary px-10 py-4 text-body-lg font-bold text-white hover:bg-gray-800 transition-all active:scale-95 shadow-button disabled:opacity-50 disabled:cursor-not-allowed min-w-[250px]"
+            variant="primary"
+            size="lg" 
+            loading={isLoading}
+            disabled={isSubscribed}
+            className="min-w-[250px]"
           >
-            {isLoading ? (
+            {isSubscribed ? SUCCESS_MESSAGES.SUBSCRIPTION_CREATED : "Subscribe Now"}
+          </Button>
+        </form>
+
+        {isSubscribed && (
+          <p className="mt-4 text-sm text-green-600">
+            Redirecting to updated content...
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
               <>
                 <svg 
                   className="animate-spin -ml-1 mr-3 h-5 w-5" 

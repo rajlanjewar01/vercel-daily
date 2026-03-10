@@ -72,7 +72,7 @@ async function SearchPageContent({ searchParams }: { searchParams: Promise<{ sea
   // Fetch data in parallel to optimize load times using cached functions
   const [articles, categories]: [Article[], Category[]] = await Promise.all([
     fetchArticlesWithParams({
-      limit: "50",
+      limit: search ? "5" : "50",
       search: search || undefined,
       category: category || undefined,
     }),
@@ -82,7 +82,7 @@ async function SearchPageContent({ searchParams }: { searchParams: Promise<{ sea
   return (
     <main className="mx-auto max-w-7xl px-6 pt-16 pb-24 min-h-screen">
       <header className="mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[#1d1d1f] mb-8">
+        <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-brand-primary mb-8">
           {search || category ? "Search Results" : "All Articles"}
         </h1>
         
@@ -102,8 +102,21 @@ async function SearchPageContent({ searchParams }: { searchParams: Promise<{ sea
       {/* Results Section */}
       <section className="mt-16">
         <div className="mb-8">
-          <p className="text-[#86868b] text-sm">
-            {search || category ? `Found ${articles.length} articles` : `Showing all ${articles.length} articles`}
+          <p className="text-brand-secondary text-sm">
+            {search || category 
+              ? `Found ${articles.length} article${articles.length !== 1 ? 's' : ''}` 
+              : `Showing all ${articles.length} articles`
+            }
+            {search && (
+              <span className="ml-2 text-brand-primary font-medium">
+                for "{search}"
+              </span>
+            )}
+            {category && (
+              <span className="ml-2 text-brand-primary font-medium">
+                in {categories.find(cat => cat.slug === category)?.name || category}
+              </span>
+            )}
           </p>
         </div>
         
@@ -127,19 +140,19 @@ async function SearchPageContent({ searchParams }: { searchParams: Promise<{ sea
                   )}
                 </div>
                 <div className="flex-1 space-y-2">
-                  <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-[#86868b]">
-                    <span className="text-[#0066cc]">{article.category}</span>
+                  <div className={COMMON_STYLES.texts.metadata}>
+                    <span className={COMMON_STYLES.texts.accent}>{article.category}</span>
                     <span>•</span>
-                    <time>
-                      {new Date(article.publishedAt).toLocaleDateString('en-US', { 
-                        month: 'short', day: 'numeric', year: 'numeric' 
-                      })}
-                    </time>
+                    <DateText 
+                      date={article.publishedAt} 
+                      format="published"
+                      className="block"
+                    />
                   </div>
-                  <h3 className="text-xl font-semibold leading-tight text-[#1d1d1f] group-hover:text-[#0066cc] transition-colors">
+                  <h3 className={`${COMMON_STYLES.texts.heading} ${COMMON_STYLES.transitions.colors}`}>
                     {article.title}
                   </h3>
-                  <p className="text-[#86868b] text-sm line-clamp-2 leading-relaxed">
+                  <p className={COMMON_STYLES.texts.body}>
                     {article.excerpt}
                   </p>
                 </div>
@@ -147,9 +160,9 @@ async function SearchPageContent({ searchParams }: { searchParams: Promise<{ sea
             ))}
           </div>
         ) : (
-          <div className="py-24 text-center rounded-[2rem] border border-dashed border-gray-200 bg-[#f5f5f7]/50">
-            <h3 className="text-xl font-semibold text-[#1d1d1f] mb-2">No articles found</h3>
-            <p className="text-[#86868b]">
+          <div className={COMMON_STYLES.containers.card}>
+            <h3 className={`${COMMON_STYLES.texts.heading} mb-2`}>No articles found</h3>
+            <p className={COMMON_STYLES.texts.muted}>
               {search ? `We couldn't find any results for "${search}". Try adjusting your search or filters.` : "No articles are available at this time."}
             </p>
             <Link 
