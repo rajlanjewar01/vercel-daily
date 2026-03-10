@@ -2,9 +2,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { Suspense } from "react";
 import { Metadata } from "next";
-import { fetchVercelDaily, Article, Category, fetchArticlesWithParams, fetchCategories } from "@/lib/api";
+import { Article, Category, fetchArticlesWithParams, fetchCategories } from "@/lib/api";
 import SearchInput from "@/components/SearchInput";
 import CategoryFilter from "@/components/CategoryFilter";
+import DateText from "@/components/ui/DateText";
+import { COMMON_STYLES } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Search Articles - Vercel Daily News",
@@ -145,7 +147,7 @@ async function SearchPageContent({ searchParams }: { searchParams: Promise<{ sea
                     <span>•</span>
                     <DateText 
                       date={article.publishedAt} 
-                      format="published"
+                      format="SHORT"
                       className="block"
                     />
                   </div>
