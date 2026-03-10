@@ -4,8 +4,8 @@ import Image from 'next/image';
 import { Suspense } from 'react';
 import { Metadata } from 'next';
 import { Article, fetchArticles } from '@/lib/api';
-import DateText from '@/components/ui/DateText';
-import { COMMON_STYLES, UI_CONFIG, SEO_DEFAULTS } from '@/lib/constants';
+import DateText from '@/components/common/DateText';
+import { COMMON_STYLES, SEO_DEFAULTS } from '@/lib/constants';
 
 export const metadata: Metadata = {
   title: "Homepage - Vercel Daily News",
@@ -100,9 +100,6 @@ async function HomePageContent() {
           >
             Browse articles →
           </Link>
-          <button className={COMMON_STYLES.BUTTON_SECONDARY}>
-            Subscribe
-          </button>
         </div>
       </header>
 
@@ -123,6 +120,7 @@ async function HomePageContent() {
                     alt={article.title}
                     fill
                     className={`object-cover ${COMMON_STYLES.transitions.transform}`}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
                 )}
               </div>

@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { SEO_DEFAULTS } from "@/lib/constants";
-import SearchIcon from "./ui/SearchIcon";
+import SearchIcon from "./common/SearchIcon";
 import SubscriptionButton from "./SubscriptionButton";
 
 export default function Navbar() {

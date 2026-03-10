@@ -2,10 +2,10 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useTransition, useCallback } from "react";
-import { cn, debounce, validateSearchInput } from "@/lib/utils";
+import { cn, debounce } from "@/lib/utils";
 import { UI_CONFIG } from "@/lib/constants";
-import SearchIcon from "./ui/SearchIcon";
-import LoadingSpinner from "./ui/LoadingSpinner";
+import SearchIcon from "./common/SearchIcon";
+import LoadingSpinner from "./common/LoadingSpinner";
 
 interface SearchInputProps {
   defaultValue?: string;
@@ -25,8 +25,6 @@ export default function SearchInput({
 
   const performSearch = useCallback((term: string) => {
     const params = new URLSearchParams(searchParams);
-    
-    const validation = validateSearchInput(term, UI_CONFIG.SEARCH_MIN_LENGTH);
     
     if (term.trim().length >= UI_CONFIG.SEARCH_MIN_LENGTH) {
       params.set("search", term.trim());

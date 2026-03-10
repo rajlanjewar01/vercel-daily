@@ -45,13 +45,6 @@ export interface Category {
   articleCount: number;
 }
 
-// Environment validation with fallbacks for build-time resilience
-const validateEnvironment = () => {
-  if (!API_CONFIG.BYPASS_TOKEN) {
-    console.warn("VERCEL_DAILY_BYPASS_TOKEN not set, using fallback");
-  }
-};
-
 /**
  * Universal fetcher for the Vercel Daily News API.
  * Injects the required bypass token automatically with improved error handling.
