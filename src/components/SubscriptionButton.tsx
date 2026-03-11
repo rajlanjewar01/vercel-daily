@@ -29,7 +29,6 @@ export default function SubscriptionButton() {
 
   const handleToggleSubscription = async () => {
     const wasSubscribed = isSubscribed;
-    console.log("[SUBSCRIPTION_BUTTON] User clicked subscription toggle, current status:", wasSubscribed ? "subscribed" : "unsubscribed");
     setIsToggling(true);
     try {
       const response = await fetch("/api/subscription-toggle", {
@@ -38,30 +37,27 @@ export default function SubscriptionButton() {
       
       if (response.ok) {
         const data = await response.json();
-        console.log("[SUBSCRIPTION_BUTTON] Toggle successful, new status:", data.subscribed ? "subscribed" : "unsubscribed");
         // Use the subscription status from the toggle response if available
         if (data.success && typeof data.subscribed === "boolean") {
           setIsSubscribed(data.subscribed);
           
           // Reload page when subscription status changes
           if (wasSubscribed !== data.subscribed) {
-            console.log("[SUBSCRIPTION_BUTTON] Subscription status changed, reloading page in 1 second");
             setTimeout(() => {
               window.location.reload();
             }, 1000);
           }
         } else {
-          console.log("[SUBSCRIPTION_BUTTON] Toggle response incomplete, refetching status");
           // Fallback: refetch subscription status
           await checkSubscriptionStatus();
         }
       } else {
-        console.error("[SUBSCRIPTION_BUTTON] Failed to toggle subscription:", response.status, response.statusText);
+        console.error("Failed to toggle subscription:", response.status, response.statusText);
         // Refetch status to ensure UI is in sync
         await checkSubscriptionStatus();
       }
     } catch (error) {
-      console.error("[SUBSCRIPTION_BUTTON] Failed to toggle subscription:", error);
+      console.error("Failed to toggle subscription:", error);
       // Refetch status to ensure UI is in sync
       await checkSubscriptionStatus();
     } finally {

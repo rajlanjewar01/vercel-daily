@@ -5,10 +5,7 @@ const BYPASS_TOKEN = process.env.VERCEL_DAILY_BYPASS_TOKEN;
 const API_URL = process.env.VERCEL_DAILY_API_URL || "https://vercel-daily-news-api.vercel.app/api";
 
 export async function POST() {
-  console.log("[SUBSCRIPTION_TOGGLE] Starting subscription toggle request");
-  
   if (!BYPASS_TOKEN) {
-    console.error("[SUBSCRIPTION_TOGGLE] Missing VERCEL_DAILY_BYPASS_TOKEN environment variable");
     return NextResponse.json(
       { error: "VERCEL_DAILY_BYPASS_TOKEN environment variable is required" },
       { status: 500 }
@@ -18,10 +15,8 @@ export async function POST() {
   try {
     const cookieStore = await cookies();
     const existingToken = cookieStore.get("x-subscription-token")?.value;
-    console.log("[SUBSCRIPTION_TOGGLE] Current subscription token:", existingToken ? "exists" : "none");
 
     if (!existingToken) {
-      console.log("[SUBSCRIPTION_TOGGLE] Creating new subscription");
       // Create a new subscription
       try {
         const createRes = await fetch(`${API_URL}/subscription/create`, {
@@ -32,7 +27,6 @@ export async function POST() {
         if (createRes.ok) {
           const createData = await createRes.json();
           const token = createData.data?.token || createRes.headers.get("x-subscription-token");
-          console.log("[SUBSCRIPTION_TOGGLE] Subscription creation successful, token received:", !!token);
 
           if (token) {
             // Activate the subscription
@@ -45,7 +39,6 @@ export async function POST() {
             });
 
             if (activateRes.ok) {
-              console.log("[SUBSCRIPTION_TOGGLE] Subscription activation successful");
               // Store the token in secure cookie
               cookieStore.set("x-subscription-token", token, {
                 httpOnly: true,
@@ -53,19 +46,17 @@ export async function POST() {
                 maxAge: 60 * 60 * 24, // 24 hours
                 sameSite: "strict",
               });
-              console.log("[SUBSCRIPTION_TOGGLE] Cookie set, subscription complete");
               return NextResponse.json({ success: true, subscribed: true });
             }
           }
         }
         
-        console.error("[SUBSCRIPTION_TOGGLE] Failed to create subscription - invalid response");
         return NextResponse.json(
           { error: "Failed to create subscription" },
           { status: 400 }
         );
       } catch (error) {
-        console.error("[SUBSCRIPTION_TOGGLE] Subscription creation error:", error);
+        console.error("Subscription creation error:", error);
         return NextResponse.json(
           { error: "Failed to create subscription" },
           { status: 500 }
@@ -73,7 +64,6 @@ export async function POST() {
       }
 
     } else {
-      console.log("[SUBSCRIPTION_TOGGLE] Unsubscribing existing subscription");
       // Unsubscribe: Remove existing subscription
       try {
         // Try to deactivate via external API
@@ -85,14 +75,11 @@ export async function POST() {
           },
         });
       } catch (apiError) {
-        console.warn("[SUBSCRIPTION_TOGGLE] External API unavailable for unsubscribe:", apiError);
+        console.warn("External API unavailable for unsubscribe:", apiError);
       }
 
       // Remove cookie (always do this regardless of API response)
-      console.log("[SUBSCRIPTION_TOGGLE] Removing subscription cookie");
       cookieStore.delete("x-subscription-token");
-      
-      console.log("[SUBSCRIPTION_TOGGLE] Unsubscription complete");
       return NextResponse.json({ 
         success: true, 
         subscribed: false,
@@ -100,7 +87,7 @@ export async function POST() {
       });
     }
   } catch (error) {
-    console.error("[SUBSCRIPTION_TOGGLE] Unexpected error during subscription toggle:", error);
+    console.error("Subscription toggle error:", error);
     return NextResponse.json(
       { 
         error: "Failed to toggle subscription", 
