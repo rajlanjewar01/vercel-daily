@@ -5,6 +5,8 @@ const BYPASS_TOKEN = process.env.VERCEL_DAILY_BYPASS_TOKEN;
 const API_URL = process.env.VERCEL_DAILY_API_URL || "https://vercel-daily-news-api.vercel.app/api";
 
 export async function GET() {
+  console.log("11 VERCEL_DAILY_API_URL", process.env.VERCEL_DAILY_API_URL);
+  console.log("11 VERCEL_DAILY_BYPASS_TOKEN", process.env.VERCEL_DAILY_BYPASS_TOKEN);
   if (!BYPASS_TOKEN) {
     return NextResponse.json(
       { error: "VERCEL_DAILY_BYPASS_TOKEN environment variable is required" },
@@ -38,6 +40,7 @@ export async function GET() {
         return NextResponse.json({ isSubscribed: isActive });
       } else {
         // If API returns error (e.g., expired/invalid token), clean up cookie
+        console.log("111 Subscription validation failed:");
         cookieStore.delete("x-subscription-token");
         return NextResponse.json({ isSubscribed: false });
       }
