@@ -4,11 +4,14 @@ import { NextResponse } from "next/server";
 const BYPASS_TOKEN = process.env.VERCEL_DAILY_BYPASS_TOKEN;
 const API_URL = process.env.VERCEL_DAILY_API_URL || "https://vercel-daily-news-api.vercel.app/api";
 
-if (!BYPASS_TOKEN) {
-  throw new Error("VERCEL_DAILY_BYPASS_TOKEN environment variable is required");
-}
-
 export async function POST() {
+  if (!BYPASS_TOKEN) {
+    return NextResponse.json(
+      { error: "VERCEL_DAILY_BYPASS_TOKEN environment variable is required" },
+      { status: 500 }
+    );
+  }
+
   try {
     const cookieStore = await cookies();
     const existingToken = cookieStore.get("x-subscription-token")?.value;

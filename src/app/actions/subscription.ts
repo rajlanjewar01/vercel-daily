@@ -7,11 +7,11 @@ import { revalidatePath } from "next/cache";
 const BYPASS_TOKEN = process.env.VERCEL_DAILY_BYPASS_TOKEN;
 const API_URL = process.env.VERCEL_DAILY_API_URL || "https://vercel-daily-news-api.vercel.app/api";
 
-if (!BYPASS_TOKEN) {
-  throw new Error("VERCEL_DAILY_BYPASS_TOKEN environment variable is required");
-}
-
 export async function toggleSubscriptionAction() {
+  if (!BYPASS_TOKEN) {
+    throw new Error("VERCEL_DAILY_BYPASS_TOKEN environment variable is required");
+  }
+
   const cookieStore = await cookies();
   const existingToken = cookieStore.get("x-subscription-token")?.value;
 
