@@ -1,4 +1,3 @@
-// components/ui/SearchIcon.tsx
 import { cn } from "@/lib/utils";
 
 interface SearchIconProps {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { SEO_DEFAULTS, COMMON_STYLES } from "@/lib/constants";
+import { SEO_DEFAULTS } from "@/lib/constants";
 
 export default function Footer() {
   const [currentYear, setCurrentYear] = useState(2026);

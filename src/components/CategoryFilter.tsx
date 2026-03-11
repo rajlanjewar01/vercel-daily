@@ -1,9 +1,8 @@
 "use client";
 
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Category } from "@/lib/api";
 import { buildSearchUrl, cn } from "@/lib/utils";
-import { COMMON_STYLES } from "@/lib/constants";
 
 interface CategoryFilterProps {
   categories: Category[];
