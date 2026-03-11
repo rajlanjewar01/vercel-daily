@@ -3,9 +3,9 @@ import Image from "next/image";
 import { Suspense } from "react";
 import { Metadata } from "next";
 import { Article, Category, fetchArticlesWithParams, fetchCategories } from "@/lib/api";
-import SearchInput from "@/components/SearchInput";
-import CategoryFilter from "@/components/CategoryFilter";
-import DateText from "@/components/common/DateText";
+import SearchInput from "@/components/features/search/SearchInput";
+import CategoryFilter from "@/components/features/search/CategoryFilter";
+import DateText from "@/components/ui/DateText";
 import { COMMON_STYLES } from "@/lib/constants";
 
 export const metadata: Metadata = {

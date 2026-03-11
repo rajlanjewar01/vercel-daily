@@ -1,4 +1,3 @@
-// app/actions/subscription.ts
 "use server";
 
 import { cookies } from "next/headers";
@@ -51,5 +50,6 @@ export async function toggleSubscriptionAction() {
     });
     cookieStore.delete("x-subscription-token");
   }
+  
   revalidatePath("/");
 }

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { UI_CONFIG, SUCCESS_MESSAGES, ERROR_MESSAGES } from "@/lib/constants";
-import Button from "./common/Button";
+import Button from "../../ui/Button";
 
 interface PaywallCTAProps {
   className?: string;

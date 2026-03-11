@@ -5,7 +5,7 @@ import { Metadata } from "next";
 import { Article, ContentBlock, fetchArticles } from "@/lib/api";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
-import PaywallCTA from "@/components/PaywallCTA";
+import PaywallCTA from "@/components/features/subscription/PaywallCTA";
 
 // Generate dynamic metadata based on the article
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {

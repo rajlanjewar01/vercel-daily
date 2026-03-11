@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { Suspense } from 'react';
 import { Metadata } from 'next';
 import { Article, fetchArticles } from '@/lib/api';
-import DateText from '@/components/common/DateText';
+import DateText from '@/components/ui/DateText';
 import { COMMON_STYLES, SEO_DEFAULTS } from '@/lib/constants';
 
 export const metadata: Metadata = {

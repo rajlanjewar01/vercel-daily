@@ -4,8 +4,8 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useTransition, useCallback } from "react";
 import { cn, debounce } from "@/lib/utils";
 import { UI_CONFIG } from "@/lib/constants";
-import SearchIcon from "./common/SearchIcon";
-import LoadingSpinner from "./common/LoadingSpinner";
+import SearchIcon from "../../ui/SearchIcon";
+import LoadingSpinner from "../../ui/LoadingSpinner";
 
 interface SearchInputProps {
   defaultValue?: string;

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { SEO_DEFAULTS } from "@/lib/constants";
-import SearchIcon from "./common/SearchIcon";
-import SubscriptionButton from "./SubscriptionButton";
+import SearchIcon from "../ui/SearchIcon";
+import SubscriptionButton from "../features/subscription/SubscriptionButton";
 
 export default function Navbar() {
   return (

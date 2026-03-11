@@ -1,39 +1,9 @@
 // lib/api.ts
 import { API_CONFIG, ERROR_MESSAGES } from "./constants";
+import type { Article, Category, ContentBlock, Author } from "./types";
 
-// Define the exact block types based on the Vercel Daily API specification
-export type ContentBlock =
-  | { type: "paragraph"; text: string }
-  | { type: "heading"; level: 2 | 3; text: string }
-  | { type: "blockquote"; text: string }
-  | { type: "unordered-list"; items: string[] }
-  | { type: "ordered-list"; items: string[] }
-  | { type: "image"; src: string; alt: string; caption?: string };
-
-export interface Author {
-  name: string;
-  avatar: string;
-}
-
-export interface Article {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: ContentBlock[];
-  category: string;
-  author: Author;
-  image: string;
-  publishedAt: string;
-  featured: boolean;
-  tags: string[];
-}
-
-export interface Category {
-  slug: string;
-  name: string;
-  articleCount: number;
-}
+// Re-export types for backward compatibility
+export type { Article, Category, ContentBlock, Author };
 
 /**
  * Universal fetcher for the Vercel Daily News API.
