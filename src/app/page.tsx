@@ -96,7 +96,7 @@ async function HomePageContent() {
         <div className="flex gap-4">
           <Link 
             href="/search" 
-            className={COMMON_STYLES.BUTTON_PRIMARY}
+            className="inline-flex items-center justify-center rounded-button bg-brand-primary px-10 py-4 text-body-lg font-bold text-white hover:bg-gray-800 transition-all active:scale-95 shadow-button disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Browse articles →
           </Link>
