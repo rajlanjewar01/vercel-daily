@@ -10,8 +10,13 @@ export default function SubscriptionButton() {
   const checkSubscriptionStatus = async () => {
     try {
       const response = await fetch("/api/subscription-status");
-      const data = await response.json();
-      setIsSubscribed(data.isSubscribed);
+      if (response.ok) {
+        const data = await response.json();
+        setIsSubscribed(data.isSubscribed);
+      } else {
+        console.error("Subscription status check failed:", response.status, response.statusText);
+        setIsSubscribed(false);
+      }
     } catch (error) {
       console.error("Failed to check subscription status:", error);
       setIsSubscribed(false);
@@ -47,7 +52,7 @@ export default function SubscriptionButton() {
           await checkSubscriptionStatus();
         }
       } else {
-        console.error("Failed to toggle subscription");
+        console.error("Failed to toggle subscription:", response.status, response.statusText);
         // Refetch status to ensure UI is in sync
         await checkSubscriptionStatus();
       }

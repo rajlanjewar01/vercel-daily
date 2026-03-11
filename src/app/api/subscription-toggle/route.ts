@@ -21,7 +21,7 @@ export async function POST() {
       try {
         const createRes = await fetch(`${API_URL}/subscription/create`, {
           method: "POST",
-          headers: { "x-vercel-protection-bypass": BYPASS_TOKEN! },
+          headers: { "x-vercel-protection-bypass": BYPASS_TOKEN },
         });
         
         if (createRes.ok) {
@@ -33,7 +33,7 @@ export async function POST() {
             const activateRes = await fetch(`${API_URL}/subscription`, {
               method: "POST",
               headers: {
-                "x-vercel-protection-bypass": BYPASS_TOKEN!,
+                "x-vercel-protection-bypass": BYPASS_TOKEN,
                 "x-subscription-token": token,
               },
             });
@@ -50,26 +50,18 @@ export async function POST() {
             }
           }
         }
-      } catch (apiError) {
-        console.warn("External API unavailable, using fallback subscription:", apiError);
+        
+        return NextResponse.json(
+          { error: "Failed to create subscription" },
+          { status: 400 }
+        );
+      } catch (error) {
+        console.error("Subscription creation error:", error);
+        return NextResponse.json(
+          { error: "Failed to create subscription" },
+          { status: 500 }
+        );
       }
-
-      // Fallback: Create a local simulation subscription for demonstration
-      const fallbackToken = `demo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      cookieStore.set("x-subscription-token", fallbackToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", 
-        maxAge: 60 * 60 * 24, // 24 hours
-        sameSite: "strict",
-      });
-      
-      console.log("Created fallback subscription token:", fallbackToken);
-      return NextResponse.json({ 
-        success: true, 
-        subscribed: true, 
-        fallback: true,
-        message: "Subscription created (demo mode - external API unavailable)"
-      });
 
     } else {
       // Unsubscribe: Remove existing subscription
@@ -78,17 +70,16 @@ export async function POST() {
         await fetch(`${API_URL}/subscription`, {
           method: "DELETE",
           headers: {
-            "x-vercel-protection-bypass": BYPASS_TOKEN!,
+            "x-vercel-protection-bypass": BYPASS_TOKEN,
             "x-subscription-token": existingToken,
           },
         });
       } catch (apiError) {
-        console.warn("External API unavailable for unsubscribe, proceeding with local cleanup:", apiError);
+        console.warn("External API unavailable for unsubscribe:", apiError);
       }
 
       // Remove cookie (always do this regardless of API response)
       cookieStore.delete("x-subscription-token");
-      console.log("Removed subscription token:", existingToken);
       
       return NextResponse.json({ 
         success: true, 

@@ -36,10 +36,11 @@ export default function PaywallCTA({ className }: PaywallCTAProps) {
             window.location.reload();
           }, UI_CONFIG.SUBSCRIPTION_SUCCESS_DELAY);
         } else {
-          throw new Error(data.message || "Subscription failed");
+          throw new Error(data.error || data.message || "Subscription failed");
         }
       } else {
-        throw new Error("Network error occurred");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
       }
     } catch (error) {
       console.error("Subscription error:", error);

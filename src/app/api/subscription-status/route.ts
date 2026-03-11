@@ -21,22 +21,13 @@ export async function GET() {
       return NextResponse.json({ isSubscribed: false });
     }
     
-    // Check if this is a demo/fallback token
-    if (subscriptionToken.startsWith("demo-")) {
-      return NextResponse.json({
-        isSubscribed: true, 
-        demo: true,
-        message: "Demo subscription active (external API unavailable)"
-      });
-    }
-    
-    // Validate real subscription with external API
+    // Validate subscription with external API
     try {
       const response = await fetch(`${API_URL}/subscription`, {
         method: "GET",
         headers: {
           "x-subscription-token": subscriptionToken,
-          "x-vercel-protection-bypass": BYPASS_TOKEN!,
+          "x-vercel-protection-bypass": BYPASS_TOKEN,
         },
       });
       
@@ -51,13 +42,11 @@ export async function GET() {
         return NextResponse.json({ isSubscribed: false });
       }
     } catch (apiError) {
-      // If external API is unreachable, fallback to token existence
-      console.warn("External API error, using token existence as fallback:", apiError);
-      return NextResponse.json({ 
-        isSubscribed: true, 
-        fallback: true,
-        message: "Subscription status (external API unavailable)"
-      });
+      console.error("External API error:", apiError);
+      return NextResponse.json(
+        { error: "Failed to check subscription status" },
+        { status: 500 }
+      );
     }
   } catch (error) {
     console.error("Subscription status check error:", error);
