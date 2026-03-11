@@ -31,7 +31,7 @@ export default function SearchInput({
     } else if (term.trim().length === 0) {
       params.delete("search");
     } else {
-      // Do nothing until they meet minimum length or clear input
+      // Do nothing until minimum length or clear input
       return; 
     }
 

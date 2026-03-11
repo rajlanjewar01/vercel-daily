@@ -1,4 +1,3 @@
-// components/Navbar.tsx
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { SEO_DEFAULTS } from "@/lib/constants";

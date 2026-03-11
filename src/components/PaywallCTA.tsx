@@ -51,12 +51,12 @@ export default function PaywallCTA({ className }: PaywallCTAProps) {
 
   return (
     <div className={cn(
-      COMMON_STYLES.CARD_BASE,
+      "relative z-20 overflow-hidden rounded-section bg-brand-light border border-brand-border-light shadow-card",
       "p-10 md:p-16 text-center",
       className
     )}>
       <div className="max-w-md mx-auto">
-        <h2 className={cn(COMMON_STYLES.HEADING_LG, "mb-4")}>
+        <h2 className={cn("text-3xl font-bold tracking-tight text-brand-primary", "mb-4")}>
           The story continues.
         </h2>
         

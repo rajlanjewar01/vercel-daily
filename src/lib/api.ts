@@ -29,16 +29,6 @@ export interface Article {
   tags: string[];
 }
 
-export interface BreakingNews {
-  id: string;
-  headline: string;
-  summary: string;
-  articleId: string;
-  category: string;
-  publishedAt: string;
-  urgent: boolean;
-}
-
 export interface Category {
   slug: string;
   name: string;
@@ -89,7 +79,7 @@ export async function fetchVercelDaily(endpoint: string, options: RequestInit = 
 }
 
 /**
- * Cached function to fetch articles - optimized with Cache Components
+ * Cached function to fetch articles
  */
 export async function fetchArticles(limit: number = API_CONFIG.DEFAULT_LIMIT) {
   "use cache";
@@ -97,7 +87,7 @@ export async function fetchArticles(limit: number = API_CONFIG.DEFAULT_LIMIT) {
 }
 
 /**
- * Cached function to fetch categories - optimized with Cache Components
+ * Cached function to fetch categories
  */
 export async function fetchCategories() {
   "use cache";

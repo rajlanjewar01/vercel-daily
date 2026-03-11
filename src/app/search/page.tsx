@@ -126,14 +126,14 @@ async function SearchPageContent({ searchParams }: { searchParams: Promise<{ sea
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
             {articles.map((article) => (
               <Link 
-                key={article.id} 
-                href={`/articles/${article.slug}`} 
+                key={article.id}
+                href={`/articles/${article.slug}`}
                 className="group flex flex-col space-y-4"
               >
                 <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-[#f5f5f7]">
                   {article.image && (
-                    <Image 
-                      src={article.image} 
+                    <Image
+                      src={article.image}
                       alt={article.title}
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -145,8 +145,8 @@ async function SearchPageContent({ searchParams }: { searchParams: Promise<{ sea
                   <div className={COMMON_STYLES.texts.metadata}>
                     <span className={COMMON_STYLES.texts.accent}>{article.category}</span>
                     <span>•</span>
-                    <DateText 
-                      date={article.publishedAt} 
+                    <DateText
+                      date={article.publishedAt}
                       format="SHORT"
                       className="block"
                     />

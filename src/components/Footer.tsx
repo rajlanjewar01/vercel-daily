@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { SEO_DEFAULTS, COMMON_STYLES } from "@/lib/constants";
 
 export default function Footer() {
-  const [currentYear, setCurrentYear] = useState(2026); // fallback year
+  const [currentYear, setCurrentYear] = useState(2026);
 
   useEffect(() => {
     setCurrentYear(new Date().getFullYear());
@@ -16,7 +16,7 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-6 py-8">
         <div className={cn(
           "text-center",
-          COMMON_STYLES.BODY_TEXT
+          "text-brand-secondary text-sm"
         )}>
           © {currentYear} {SEO_DEFAULTS.SITE_NAME}. All rights reserved.
         </div>

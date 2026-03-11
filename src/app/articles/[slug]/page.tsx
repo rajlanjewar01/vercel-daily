@@ -2,10 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { Suspense } from "react";
 import { Metadata } from "next";
-import { fetchVercelDaily, Article, ContentBlock, fetchArticles } from "@/lib/api";
+import { Article, ContentBlock, fetchArticles } from "@/lib/api";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
-import { toggleSubscriptionAction } from "@/app/actions/subscription";
 import PaywallCTA from "@/components/PaywallCTA";
 
 // Generate dynamic metadata based on the article
@@ -379,33 +378,6 @@ async function ArticlePageContent({ params }: { params: Promise<{ slug: string }
                   {tag}
                 </span>
               ))}
-            </div>
-          </div>
-        )}
-
-        {/* Subscribe CTA - Only show for subscribed users (different from paywall) */}
-        {isSubscribed && (
-          <div className="mt-16 pt-8 border-t border-gray-100">
-            <div className="bg-gradient-to-r from-[#f5f5f7] to-[#fafafa] rounded-2xl p-8 text-center">
-              <h3 className="text-2xl font-bold text-[#1d1d1f] mb-3">
-                Get the latest insights delivered to your inbox
-              </h3>
-              <p className="text-[#86868b] mb-6 max-w-2xl mx-auto">
-                Join thousands of developers who stay ahead with our weekly newsletter covering the latest in web development, frameworks, and best practices.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-                <input 
-                  type="email" 
-                  placeholder="Enter your email address"
-                  className="px-4 py-3 border border-gray-200 rounded-full text-center sm:text-left w-full sm:w-80 focus:outline-none focus:ring-2 focus:ring-[#0066cc] focus:border-transparent"
-                />
-                <button className="bg-[#0066cc] text-white px-8 py-3 rounded-full font-medium hover:bg-[#004499] transition-colors w-full sm:w-auto">
-                  Subscribe
-                </button>
-              </div>
-              <p className="text-xs text-[#86868b] mt-4">
-                No spam, unsubscribe at any time.
-              </p>
             </div>
           </div>
         )}

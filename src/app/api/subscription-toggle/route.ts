@@ -18,7 +18,7 @@ export async function POST() {
       try {
         const createRes = await fetch(`${API_URL}/subscription/create`, {
           method: "POST",
-          headers: { "x-vercel-protection-bypass": BYPASS_TOKEN },
+          headers: { "x-vercel-protection-bypass": BYPASS_TOKEN! },
         });
         
         if (createRes.ok) {
@@ -30,7 +30,7 @@ export async function POST() {
             const activateRes = await fetch(`${API_URL}/subscription`, {
               method: "POST",
               headers: {
-                "x-vercel-protection-bypass": BYPASS_TOKEN,
+                "x-vercel-protection-bypass": BYPASS_TOKEN!,
                 "x-subscription-token": token,
               },
             });
@@ -75,7 +75,7 @@ export async function POST() {
         await fetch(`${API_URL}/subscription`, {
           method: "DELETE",
           headers: {
-            "x-vercel-protection-bypass": BYPASS_TOKEN,
+            "x-vercel-protection-bypass": BYPASS_TOKEN!,
             "x-subscription-token": existingToken,
           },
         });

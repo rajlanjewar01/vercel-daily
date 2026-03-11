@@ -12,7 +12,7 @@ interface CategoryFilterProps {
   className?: string;
 }
 
-export default function CategoryFilter({ 
+export default function CategoryFilter({
   categories, 
   currentCategory, 
   currentSearch,
@@ -20,7 +20,6 @@ export default function CategoryFilter({
 }: CategoryFilterProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   const handleCategoryChange = (selectedCategory: string) => {
     // Build new URL with updated parameters
@@ -45,7 +44,9 @@ export default function CategoryFilter({
         id="category-filter"
         value={currentCategory || ""}
         onChange={(e) => handleCategoryChange(e.target.value)}
-        className={cn(COMMON_STYLES.SELECT_BASE)}
+        className={cn(
+          "block w-full max-w-sm px-3 py-2 bg-white border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        )}
         aria-label="Filter articles by category"
       >
         <option value="">All Categories</option>

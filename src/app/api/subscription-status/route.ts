@@ -20,7 +20,7 @@ export async function GET() {
     
     // Check if this is a demo/fallback token
     if (subscriptionToken.startsWith("demo-")) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         isSubscribed: true, 
         demo: true,
         message: "Demo subscription active (external API unavailable)"
