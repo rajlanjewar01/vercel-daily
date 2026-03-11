@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-const BYPASS_TOKEN = 'OykROcuULI6YJwAwk3VnWv4gMMbpAq6q';
+const BYPASS_TOKEN = process.env.VERCEL_DAILY_BYPASS_TOKEN;
 const API_URL = process.env.VERCEL_DAILY_API_URL || "https://vercel-daily-news-api.vercel.app/api";
 
 export async function GET() {
