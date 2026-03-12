@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Suspense } from "react";
 import { Metadata } from "next";
 import { Article, ContentBlock, fetchArticles } from "@/lib/api";
+import { formatDate } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import PaywallCTA from "@/components/features/subscription/PaywallCTA";
@@ -58,11 +59,11 @@ function ArticlePageLoading() {
   return (
     <div className="min-h-screen bg-white">
       {/* Back Navigation - Show actual link since it doesn't depend on fetched data */}
-      <div className="bg-[#f5f5f7] border-b border-gray-200">
+      <div className="bg-slate-100 border-b border-gray-200">
         <div className="mx-auto max-w-4xl px-6 py-4">
           <Link 
             href="/search" 
-            className="inline-flex items-center text-[#0066cc] hover:text-[#004499] transition-colors text-sm font-medium"
+            className="inline-flex items-center text-blue-600 hover:text-blue-700 transition-colors text-sm font-medium"
           >
             ← Back to all articles
           </Link>
@@ -154,7 +155,7 @@ function ContentRenderer({ block }: { block: ContentBlock }) {
   switch (block.type) {
     case "paragraph":
       return (
-        <p className="text-[#1d1d1f] text-lg leading-relaxed mb-6">
+        <p className="text-slate-900 text-lg leading-relaxed mb-6">
           {block.text}
         </p>
       );
@@ -162,21 +163,21 @@ function ContentRenderer({ block }: { block: ContentBlock }) {
     case "heading":
       if (block.level === 2) {
         return (
-          <h2 className="text-3xl font-bold text-[#1d1d1f] mt-12 mb-6">
+          <h2 className="text-3xl font-bold text-slate-900 mt-12 mb-6">
             {block.text}
           </h2>
         );
       }
       return (
-        <h3 className="text-2xl font-semibold text-[#1d1d1f] mt-10 mb-4">
+        <h3 className="text-2xl font-semibold text-slate-900 mt-10 mb-4">
           {block.text}
         </h3>
       );
     
     case "blockquote":
       return (
-        <blockquote className="border-l-4 border-[#0066cc] pl-6 py-2 my-8 bg-[#f5f5f7] rounded-r-lg">
-          <p className="text-xl italic text-[#1d1d1f] font-medium">
+        <blockquote className="border-l-4 border-blue-600 pl-6 py-2 my-8 bg-slate-100 rounded-r-lg">
+          <p className="text-xl italic text-slate-900 font-medium">
             {block.text}
           </p>
         </blockquote>
@@ -186,7 +187,7 @@ function ContentRenderer({ block }: { block: ContentBlock }) {
       return (
         <ul className="list-disc list-inside mb-6 space-y-2">
           {block.items.map((item, index) => (
-            <li key={index} className="text-[#1d1d1f] text-lg leading-relaxed ml-4">
+            <li key={index} className="text-slate-900 text-lg leading-relaxed ml-4">
               {item}
             </li>
           ))}
@@ -197,7 +198,7 @@ function ContentRenderer({ block }: { block: ContentBlock }) {
       return (
         <ol className="list-decimal list-inside mb-6 space-y-2">
           {block.items.map((item, index) => (
-            <li key={index} className="text-[#1d1d1f] text-lg leading-relaxed ml-4">
+            <li key={index} className="text-slate-900 text-lg leading-relaxed ml-4">
               {item}
             </li>
           ))}
@@ -207,7 +208,7 @@ function ContentRenderer({ block }: { block: ContentBlock }) {
     case "image":
       return (
         <figure className="my-10">
-          <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-[#f5f5f7]">
+          <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-slate-100">
             {block.src && block.src.trim() !== "" ? (
               <Image 
                 src={block.src} 
@@ -217,13 +218,13 @@ function ContentRenderer({ block }: { block: ContentBlock }) {
                 sizes="(max-width: 1200px) 100vw, 1200px"
               />
             ) : (
-              <div className="flex items-center justify-center h-full text-[#86868b]">
+              <div className="flex items-center justify-center h-full text-slate-500">
                 <span>Image not available</span>
               </div>
             )}
           </div>
           {block.caption && (
-            <figcaption className="text-center text-[#86868b] text-sm mt-3 italic">
+            <figcaption className="text-center text-slate-500 text-sm mt-3 italic">
               {block.caption}
             </figcaption>
           )}
@@ -254,11 +255,11 @@ async function ArticlePageContent({ params }: { params: Promise<{ slug: string }
   return (
     <div className="min-h-screen bg-white">
       {/* Back Navigation */}
-      <div className="bg-[#f5f5f7] border-b border-gray-200">
+      <div className="bg-slate-100 border-b border-gray-200">
         <div className="mx-auto max-w-4xl px-6 py-4">
           <Link 
             href="/search" 
-            className="inline-flex items-center text-[#0066cc] hover:text-[#004499] transition-colors text-sm font-medium"
+            className="inline-flex items-center text-blue-600 hover:text-blue-700 transition-colors text-sm font-medium"
           >
             ← Back to all articles
           </Link>
@@ -272,9 +273,7 @@ async function ArticlePageContent({ params }: { params: Promise<{ slug: string }
             <span className="text-brand-accent">{article.category}</span>
             <span>•</span>
             <time>
-              {new Date(article.publishedAt).toLocaleDateString('en-US', { 
-                month: 'long', day: 'numeric', year: 'numeric' 
-              })}
+              {formatDate(article.publishedAt, "READABLE")}
             </time>
           </div>
           
@@ -298,13 +297,11 @@ async function ArticlePageContent({ params }: { params: Promise<{ slug: string }
               />
             )}
             <div>
-              <p className="font-semibold text-[#1d1d1f]">
+              <p className="font-semibold text-slate-900">
                 {article.author?.name || 'Unknown Author'}
               </p>
-              <p className="text-sm text-[#86868b]">
-                Published {new Date(article.publishedAt).toLocaleDateString('en-US', { 
-                  month: 'long', day: 'numeric', year: 'numeric' 
-                })}
+              <p className="text-sm text-slate-500">
+                Published {formatDate(article.publishedAt, "READABLE")}
               </p>
             </div>
           </div>
@@ -312,7 +309,7 @@ async function ArticlePageContent({ params }: { params: Promise<{ slug: string }
 
         {/* Featured Image */}
         {article.image && (
-          <div className="relative aspect-video w-full overflow-hidden rounded-2xl mb-12 bg-[#f5f5f7]">
+          <div className="relative aspect-video w-full overflow-hidden rounded-2xl mb-12 bg-slate-100">
             <Image 
               src={article.image} 
               alt={article.title}
@@ -334,7 +331,7 @@ async function ArticlePageContent({ params }: { params: Promise<{ slug: string }
                   <ContentRenderer key={index} block={block} />
                 ))
               ) : (
-                <p className="text-[#1d1d1f] text-lg leading-relaxed mb-6">
+                <p className="text-slate-900 text-lg leading-relaxed mb-6">
                   {article.excerpt}
                 </p>
               )}
@@ -354,7 +351,7 @@ async function ArticlePageContent({ params }: { params: Promise<{ slug: string }
                     )}
                   </>
                 ) : (
-                  <p className="text-[#1d1d1f] text-lg leading-relaxed mb-6">
+                  <p className="text-slate-900 text-lg leading-relaxed mb-6">
                     {article.excerpt}
                   </p>
                 )}
@@ -373,7 +370,7 @@ async function ArticlePageContent({ params }: { params: Promise<{ slug: string }
               {article.tags.map((tag, index) => (
                 <span 
                   key={index}
-                  className="bg-[#f5f5f7] text-[#1d1d1f] px-3 py-1 rounded-full text-sm font-medium"
+                  className="bg-slate-100 text-slate-900 px-3 py-1 rounded-full text-sm font-medium"
                 >
                   {tag}
                 </span>
@@ -393,7 +390,7 @@ async function ArticlePageContent({ params }: { params: Promise<{ slug: string }
         <div className="mt-16 pt-8 border-t border-gray-100 flex justify-center">
           <Link 
             href="/search" 
-            className="bg-[#0066cc] text-white px-8 py-3 rounded-full font-medium hover:bg-[#004499] transition-colors"
+            className="bg-blue-600 text-white px-8 py-3 rounded-full font-medium hover:bg-blue-700 transition-colors"
           >
             View more articles
           </Link>
@@ -418,30 +415,28 @@ async function TrendingArticles({ currentSlug }: { currentSlug: string }) {
 
     return (
       <section className="mt-16 pt-8 border-t border-gray-100">
-        <h2 className="text-2xl font-bold text-[#1d1d1f] mb-8">Trending Articles</h2>
+        <h2 className="text-2xl font-bold text-slate-900 mb-8">Trending Articles</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {trendingArticles.map((article, index) => (
             <Link 
               key={article.id} 
               href={`/articles/${article.slug}`}
-              className="group flex gap-4 p-4 rounded-2xl hover:bg-[#f5f5f7] transition-colors"
+              className="group flex gap-4 p-4 rounded-2xl hover:bg-slate-100 transition-colors"
             >
-              <div className="flex-shrink-0 w-16 h-16 bg-[#f5f5f7] rounded-xl flex items-center justify-center">
-                <span className="text-2xl font-bold text-[#0066cc]">
+              <div className="flex-shrink-0 w-16 h-16 bg-slate-100 rounded-xl flex items-center justify-center">
+                <span className="text-2xl font-bold text-blue-600">
                   {(index + 1).toString().padStart(2, '0')}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[11px] font-bold uppercase tracking-widest text-[#86868b] mb-2">
+                <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-2">
                   {article.category}
                 </p>
-                <h3 className="font-semibold text-[#1d1d1f] leading-tight group-hover:text-[#0066cc] transition-colors line-clamp-2">
+                <h3 className="font-semibold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
                   {article.title}
                 </h3>
-                <p className="text-sm text-[#86868b] mt-2">
-                  {new Date(article.publishedAt).toLocaleDateString('en-US', { 
-                    month: 'short', day: 'numeric' 
-                  })}
+                <p className="text-sm text-slate-500 mt-2">
+                  {formatDate(article.publishedAt, "COMPACT")}
                 </p>
               </div>
             </Link>

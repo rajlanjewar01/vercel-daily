@@ -17,7 +17,7 @@ export async function POST() {
     const existingToken = cookieStore.get("x-subscription-token")?.value;
 
     if (!existingToken) {
-      // Create a new subscription
+      // create a new subscription
       try {
         const createRes = await fetch(`${API_URL}/subscription/create`, {
           method: "POST",
@@ -29,7 +29,7 @@ export async function POST() {
           const token = createData.data?.token || createRes.headers.get("x-subscription-token");
 
           if (token) {
-            // Activate the subscription
+            // activate the subscription
             const activateRes = await fetch(`${API_URL}/subscription`, {
               method: "POST",
               headers: {
@@ -39,7 +39,7 @@ export async function POST() {
             });
 
             if (activateRes.ok) {
-              // Store the token in secure cookie
+              // store the token in secure cookie
               cookieStore.set("x-subscription-token", token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
@@ -64,7 +64,7 @@ export async function POST() {
       }
 
     } else {
-      // Unsubscribe: Remove existing subscription
+      // unsubscribe: remove existing subscription
       try {
         // Try to deactivate via external API
         await fetch(`${API_URL}/subscription`, {

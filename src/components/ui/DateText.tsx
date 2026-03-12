@@ -11,7 +11,7 @@ interface DateTextProps {
 
 export default function DateText({ 
   date, 
-  format = "SHORT", 
+  format = "COMPACT", 
   className,
   prefix 
 }: DateTextProps) {

@@ -28,17 +28,17 @@ export const metadata: Metadata = {
 // Loading component for the search page
 function SearchPageLoading() {
   return (
-    <main className="mx-auto max-w-7xl px-6 pt-16 pb-24 min-h-screen">
+    <main className={`${COMMON_STYLES.container} ${COMMON_STYLES.section} ${COMMON_STYLES.page}`}>
       <header className="mb-12">
-        <div className="h-12 bg-gray-200 animate-pulse rounded mb-8"></div>
+        <div className={`h-12 ${COMMON_STYLES.animations.skeleton} mb-8`}></div>
         
         {/* Search Bar Loading */}
-        <div className="h-12 bg-gray-200 animate-pulse rounded mb-4"></div>
+        <div className={`h-12 ${COMMON_STYLES.animations.skeleton} mb-4`}></div>
         
         {/* Category Filters Loading */}
         <div className="mt-8 flex gap-2">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-8 w-20 bg-gray-200 animate-pulse rounded-full"></div>
+            <div key={i} className={`h-8 w-20 ${COMMON_STYLES.animations.pulse} rounded-full`}></div>
           ))}
         </div>
       </header>
@@ -46,17 +46,17 @@ function SearchPageLoading() {
       {/* Results Loading */}
       <section className="mt-16">
         <div className="mb-8">
-          <div className="h-4 w-32 bg-gray-200 animate-pulse rounded"></div>
+          <div className={`h-4 w-32 ${COMMON_STYLES.animations.skeleton}`}></div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+        <div className={COMMON_STYLES.layout.gridResponsive}>
           {Array.from({ length: 9 }).map((_, i) => (
             <div key={i} className="flex flex-col space-y-4">
-              <div className="aspect-video bg-gray-200 animate-pulse rounded-2xl"></div>
+              <div className={`aspect-video ${COMMON_STYLES.animations.skeleton} rounded-2xl`}></div>
               <div className="space-y-2">
-                <div className="h-3 w-32 bg-gray-200 animate-pulse rounded"></div>
-                <div className="h-6 bg-gray-200 animate-pulse rounded"></div>
-                <div className="h-4 bg-gray-200 animate-pulse rounded w-3/4"></div>
+                <div className={`h-3 w-32 ${COMMON_STYLES.animations.skeleton}`}></div>
+                <div className={`h-6 ${COMMON_STYLES.animations.skeleton}`}></div>
+                <div className={`h-4 ${COMMON_STYLES.animations.skeleton} w-3/4`}></div>
               </div>
             </div>
           ))}
@@ -82,9 +82,9 @@ async function SearchPageContent({ searchParams }: { searchParams: Promise<{ sea
   ]);
 
   return (
-    <main className="mx-auto max-w-7xl px-6 pt-16 pb-24 min-h-screen">
+    <main className={`${COMMON_STYLES.container} ${COMMON_STYLES.section} ${COMMON_STYLES.page}`}>
       <header className="mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-brand-primary mb-8">
+        <h1 className={COMMON_STYLES.texts.pageTitle}>
           {search || category ? "Search Results" : "All Articles"}
         </h1>
         
@@ -123,20 +123,20 @@ async function SearchPageContent({ searchParams }: { searchParams: Promise<{ sea
         </div>
         
         {articles.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+          <div className={COMMON_STYLES.layout.gridResponsive}>
             {articles.map((article) => (
               <Link 
                 key={article.id}
                 href={`/articles/${article.slug}`}
                 className="group flex flex-col space-y-4"
               >
-                <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-[#f5f5f7]">
+                <div className={COMMON_STYLES.images.container}>
                   {article.image && (
                     <Image
                       src={article.image}
                       alt={article.title}
                       fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      className={COMMON_STYLES.images.responsive}
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                   )}
@@ -147,7 +147,7 @@ async function SearchPageContent({ searchParams }: { searchParams: Promise<{ sea
                     <span>•</span>
                     <DateText
                       date={article.publishedAt}
-                      format="SHORT"
+                      format="COMPACT"
                       className="block"
                     />
                   </div>
@@ -162,14 +162,14 @@ async function SearchPageContent({ searchParams }: { searchParams: Promise<{ sea
             ))}
           </div>
         ) : (
-          <div className={COMMON_STYLES.containers.card}>
+          <div className="py-24 text-center rounded-[2rem] border border-dashed border-gray-200 bg-slate-100/50">
             <h3 className={`${COMMON_STYLES.texts.heading} mb-2`}>No articles found</h3>
             <p className={COMMON_STYLES.texts.muted}>
               {search ? `We couldn't find any results for "${search}". Try adjusting your search or filters.` : "No articles are available at this time."}
             </p>
             <Link 
               href="/search" 
-              className="inline-block mt-6 text-sm font-semibold text-[#0066cc] hover:underline"
+              className={COMMON_STYLES.texts.link}
             >
               Clear all filters
             </Link>

@@ -130,7 +130,7 @@ async function HomePageContent() {
                   <span> • </span>
                   <DateText 
                     date={article.publishedAt} 
-                    format="SHORT"
+                    format="COMPACT"
                     className="inline"
                   />
                 </div>

@@ -13,7 +13,7 @@ export function cn(...inputs: ClassValue[]) {
 /**
  * Format date with consistent options
  */
-export function formatDate(date: string | Date, format: keyof typeof DATE_FORMAT_OPTIONS = "SHORT"): string {
+export function formatDate(date: string | Date, format: keyof typeof DATE_FORMAT_OPTIONS = "COMPACT"): string {
   const dateObj = typeof date === "string" ? new Date(date) : date;
   return dateObj.toLocaleDateString("en-US", DATE_FORMAT_OPTIONS[format]);
 }

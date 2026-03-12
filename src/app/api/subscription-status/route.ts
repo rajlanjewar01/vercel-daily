@@ -33,11 +33,9 @@ export async function GET() {
       
       if (response.ok) {
         const data = await response.json();
-        // Check if subscription is active based on API response
         const isActive = data.success && data.data?.status === "active";
         return NextResponse.json({ isSubscribed: isActive });
       } else {
-        // If API returns error (e.g., expired/invalid token), clean up cookie
         cookieStore.delete("x-subscription-token");
         return NextResponse.json({ isSubscribed: false });
       }

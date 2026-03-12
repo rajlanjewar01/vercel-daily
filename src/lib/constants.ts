@@ -1,7 +1,7 @@
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: process.env.VERCEL_DAILY_API_URL || "https://vercel-daily-news-api.vercel.app/api",
-  BYPASS_TOKEN: process.env.VERCEL_DAILY_BYPASS_TOKEN || "OykROcuULI6YJwAwk3VnWv4gMMbpAq6q",
+  BASE_URL: process.env.VERCEL_DAILY_API_URL,
+  BYPASS_TOKEN: process.env.VERCEL_DAILY_BYPASS_TOKEN,
   DEFAULT_LIMIT: 50,
 } as const;
 
@@ -17,51 +17,80 @@ export const COMMON_STYLES = {
   // Layout
   container: "mx-auto max-w-7xl px-6",
   section: "pt-16 pb-24",
+  page: "min-h-screen",
   
   // Layout Utilities  
   layout: {
     gridResponsive: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12",
   },
   
-  // Container styles
-  containers: {
-    card: "py-24 text-center rounded-[2rem] border border-dashed border-gray-200 bg-[#f5f5f7]/50",
-  },
-  
   // Text styles
   texts: {
-    heading: 'text-xl font-semibold leading-tight text-[#1d1d1f] group-hover:text-[#0066cc] transition-colors',
-    body: 'text-[#86868b] text-sm line-clamp-2 leading-relaxed',
-    articleParagraph: 'text-[19px] leading-[1.6] text-[#1d1d1f] font-normal',
-    caption: 'mt-4 text-center text-sm text-[#86868b] font-medium italic',
-    metadata: 'flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-[#86868b]',
-    muted: 'text-[#86868b]',
-    accent: 'text-[#0066cc]',
-    nav: 'text-[#424245] hover:text-[#1d1d1f] transition-colors',
+    pageTitle: 'text-4xl md:text-5xl font-bold tracking-tight text-brand-primary mb-8',
+    heading: 'text-xl font-semibold leading-tight text-slate-900 group-hover:text-blue-600 transition-colors',
+    body: 'text-slate-500 text-sm line-clamp-2 leading-relaxed',
+    articleParagraph: 'text-[19px] leading-[1.6] text-slate-900 font-normal',
+    caption: 'mt-4 text-center text-sm text-slate-500 font-medium italic',
+    metadata: 'flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-slate-500',
+    muted: 'text-slate-500',
+    accent: 'text-blue-600',
+    nav: 'text-slate-600 hover:text-slate-900 transition-colors',
+    link: 'inline-block mt-6 text-sm font-semibold text-blue-600 hover:underline',
   },
   
   // Animation styles
   animations: {
     pulse: 'bg-gray-200 animate-pulse',
+    skeleton: 'bg-gray-200 animate-pulse rounded',
+  },
+  
+  // Image styles
+  images: {
+    container: 'relative aspect-video w-full overflow-hidden rounded-2xl bg-slate-100',
+    responsive: 'object-cover transition-transform duration-700 group-hover:scale-105',
   },
   
   // Transition styles
   transitions: {
-    colors: 'group-hover:text-[#0066cc] transition-colors',
+    colors: 'group-hover:text-blue-600 transition-colors',
     transform: 'transition-transform duration-500 group-hover:scale-105',
   },
   
   // Legacy uppercase constants for backward compatibility
 } as const;
 
+// Brand Colors
+export const COLORS = {
+  // Primary brand colors
+  primary: '#0066cc',
+  primaryHover: '#004499',
+  
+  // Background colors
+  background: {
+    light: '#f5f5f7',
+    dark: '#1a1a2e',
+  },
+  
+  // Text colors
+  text: {
+    primary: '#1d1d1f',
+    secondary: '#86868b',
+  },
+} as const;
+
 // Date Formatting Options
 export const DATE_FORMAT_OPTIONS = {
-  SHORT: { 
+  COMPACT: { 
     month: 'short' as const, 
     day: 'numeric' as const, 
     year: 'numeric' as const 
   },
-  LONG: { 
+  READABLE: { 
+    month: 'long' as const, 
+    day: 'numeric' as const, 
+    year: 'numeric' as const 
+  },
+  DETAILED: { 
     weekday: 'long' as const, 
     year: 'numeric' as const, 
     month: 'long' as const, 
